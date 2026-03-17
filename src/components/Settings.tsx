@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Download, Upload, Shield, Globe, Info, ChevronRight, X, Smartphone, Trash2 } from 'lucide-react';
+import { Download, Upload, Shield, Globe, Info, ChevronRight, X, Smartphone, Trash2, Mail, ExternalLink } from 'lucide-react';
 import { db } from '../db';
 import { useLiveQuery } from 'dexie-react-hooks';
 
@@ -17,6 +17,53 @@ export default function Settings({ lang, t }: SettingsProps) {
   const [showSecurityModal, setShowSecurityModal] = useState(false);
   const [deferredPrompt, setDeferredPrompt] = useState<any>(null);
   const [showIosGuide, setShowIosGuide] = useState(false);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [feedbackText, setFeedbackText] = useState('');
+  const [isSendingFeedback, setIsSendingFeedback] = useState(false);
+  const [isFeedbackSent, setIsFeedbackSent] = useState(false);
+
+  const handleSendFeedback = async () => {
+    if (!feedbackText.trim()) return;
+    
+    setIsSendingFeedback(true);
+    try {
+      // Using the specific Formspree Form ID provided by the user
+      const response = await fetch('https://formspree.io/f/mqeygdja', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json'
+        },
+        body: JSON.stringify({
+          message: feedbackText,
+          _subject: `隨書 Suishu Feedback (${new Date().toLocaleDateString()})`,
+        })
+      });
+
+      if (response.ok) {
+        setIsFeedbackSent(true);
+        setFeedbackText('');
+        setTimeout(() => {
+          setShowFeedbackModal(false);
+          setIsFeedbackSent(false);
+        }, 2000);
+      } else {
+        const errorData = await response.json();
+        console.error('Formspree Error:', errorData);
+        throw new Error('AJAX failed');
+      }
+    } catch (error) {
+      console.log('Background send failed, falling back to mailto...');
+      // Fallback: Open mail app if background send fails
+      const subject = encodeURIComponent(`隨書意見回饋 Suishu Feedback (${new Date().toLocaleDateString()})`);
+      const body = encodeURIComponent(feedbackText);
+      window.location.href = `mailto:linsamsir@gmail.com?subject=${subject}&body=${body}`;
+      setShowFeedbackModal(false);
+      setFeedbackText('');
+    } finally {
+      setIsSendingFeedback(false);
+    }
+  };
 
   useEffect(() => {
     const handler = (e: any) => {
@@ -94,6 +141,13 @@ export default function Settings({ lang, t }: SettingsProps) {
   const [showClearConfirm, setShowClearConfirm] = useState(false);
 
   const handleExport = async () => {
+    // Telemetry: Track export frequency (Anonymous)
+    try {
+      // This is a placeholder for a tracking service like Umami or a simple ping
+      console.log('Telemetry: Export triggered');
+      // fetch('https://your-analytics-endpoint.com/api/event', { method: 'POST', body: JSON.stringify({ event: 'export_clicked' }) }).catch(() => {});
+    } catch (e) {}
+
     const entries = await db.entries.toArray();
     const exportData = await Promise.all(entries.map(async e => {
       if (e.photo) {
@@ -314,14 +368,104 @@ export default function Settings({ lang, t }: SettingsProps) {
             <input type="file" accept=".json" onChange={handleImport} className="hidden" />
           </label>
           <div className="h-px bg-ac-yellow/30" />
-          <button onClick={() => setShowClearConfirm(true)} className="w-full flex items-center justify-between font-bold text-red-500">
+          <button onClick={() => setShowClearConfirm(true)} className="w-full flex items-center justify-between font-bold text-red-500 text-left">
             <span>{t.clearAll}</span>
             <Trash2 size={20} />
           </button>
         </div>
       </section>
 
+      {/* Support & Feedback */}
+      <section className="space-y-4">
+        <div className="flex items-center gap-2 text-ac-brown/60 font-bold uppercase text-sm">
+          <Mail size={16} />
+          <span>{lang === 'zh' ? '支援與回饋' : lang === 'en' ? 'Support & Feedback' : 'サポート'}</span>
+        </div>
+        <div className="ac-card p-4">
+          <button 
+            onClick={() => setShowFeedbackModal(true)}
+            className="w-full flex items-center justify-between font-bold text-ac-brown"
+          >
+            <span>{lang === 'zh' ? '發送意見回饋' : lang === 'en' ? 'Send Feedback' : 'フィードバック'}</span>
+            <ChevronRight size={20} className="text-ac-yellow" />
+          </button>
+        </div>
+      </section>
+
       <AnimatePresence>
+        {showFeedbackModal && (
+          <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm">
+            <motion.div
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              exit={{ y: 20, opacity: 0 }}
+              className="ac-card p-6 w-full max-w-md bg-white space-y-4"
+            >
+              <div className="flex items-center justify-between">
+                <h3 className="text-xl font-bold text-ac-brown">
+                  {lang === 'zh' ? '意見回饋' : lang === 'en' ? 'Feedback' : 'フィードバック'}
+                </h3>
+                <button 
+                  onClick={() => setShowFeedbackModal(false)} 
+                  className="text-ac-brown/40"
+                  disabled={isSendingFeedback}
+                >
+                  <X size={24} />
+                </button>
+              </div>
+              
+              {isFeedbackSent ? (
+                <motion.div 
+                  initial={{ scale: 0.9, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  className="py-12 flex flex-col items-center justify-center space-y-4 text-center"
+                >
+                  <div className="w-16 h-16 rounded-full bg-emerald-100 text-emerald-500 flex items-center justify-center">
+                    <Shield size={32} />
+                  </div>
+                  <p className="font-bold text-ac-brown text-lg">
+                    {lang === 'zh' ? '傳送成功！感謝您的回饋' : 
+                     lang === 'en' ? 'Sent! Thank you for your feedback' : 
+                     '送信しました！ありがとうございます'}
+                  </p>
+                </motion.div>
+              ) : (
+                <>
+                  <p className="text-sm text-ac-brown/60">
+                    {lang === 'zh' ? '您的建議是我們進步的動力，請告訴我們您的想法：' : 
+                     lang === 'en' ? 'Your feedback helps us improve. Please let us know your thoughts:' : 
+                     'あなたのフィードバックは私たちの改善に役立ちます。'}
+                  </p>
+
+                  <textarea
+                    value={feedbackText}
+                    onChange={(e) => setFeedbackText(e.target.value)}
+                    placeholder={lang === 'zh' ? '在此輸入您的意見...' : lang === 'en' ? 'Type your feedback here...' : 'ここに入力...'}
+                    className="w-full h-32 p-4 rounded-xl bg-ac-bg border-none focus:ring-2 focus:ring-ac-yellow text-ac-brown resize-none"
+                    autoFocus
+                    disabled={isSendingFeedback}
+                  />
+
+                  <button
+                    onClick={handleSendFeedback}
+                    disabled={!feedbackText.trim() || isSendingFeedback}
+                    className="w-full p-4 rounded-xl font-bold bg-ac-yellow text-white shadow-lg shadow-ac-yellow/20 disabled:opacity-50 disabled:shadow-none transition-all active:scale-95 flex items-center justify-center gap-2"
+                  >
+                    {isSendingFeedback ? (
+                      <>
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                        <span>{lang === 'zh' ? '傳送中...' : lang === 'en' ? 'Sending...' : '送信中...'}</span>
+                      </>
+                    ) : (
+                      <span>{lang === 'zh' ? '確認送出' : lang === 'en' ? 'Submit' : '送信する'}</span>
+                    )}
+                  </button>
+                </>
+              )}
+            </motion.div>
+          </div>
+        )}
+
         {showClearConfirm && (
           <div className="fixed inset-0 z-[100] flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm">
             <motion.div
