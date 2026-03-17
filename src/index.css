@@ -1,0 +1,35 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: "Inter", "Noto Sans TC", ui-sans-serif, system-ui, sans-serif;
+  --color-ac-bg: #fef9e7;
+  --color-ac-green: #78c850;
+  --color-ac-brown: #8b5a2b;
+  --color-ac-pink: #ffb7c5;
+  --color-ac-yellow: #f9e79f;
+  --color-ac-blue: #aed6f1;
+}
+
+@layer base {
+  body {
+    @apply bg-ac-bg text-ac-brown selection:bg-ac-pink/30;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+.ac-card {
+  @apply bg-white rounded-3xl border-4 border-ac-yellow shadow-[8px_8px_0px_0px_rgba(249,231,159,1)];
+}
+
+.ac-button {
+  @apply bg-ac-green text-white font-bold py-3 px-6 rounded-full shadow-[0_4px_0_0_#5a9a3c] active:translate-y-1 active:shadow-none transition-all;
+}
+
+.ac-input {
+  @apply w-full bg-white border-2 border-ac-yellow rounded-2xl p-4 focus:outline-none focus:border-ac-green transition-colors;
+}
+
+/* Hide scrollbar */
+::-webkit-scrollbar {
+  display: none;
+}
