@@ -257,6 +257,21 @@ export default function Settings({ lang, t }: SettingsProps) {
             <p className="mt-4 font-medium">{content.footer}</p>
           </div>
         );
+      case 'changelog':
+        return (
+          <div className="space-y-6 text-ac-brown/80">
+            <p className="font-bold text-lg text-ac-brown">{content.title}</p>
+            <div className="space-y-6 relative before:absolute before:left-[7px] before:top-2 before:bottom-2 before:w-0.5 before:bg-ac-yellow/30">
+              {content.items.map((item: any, i: number) => (
+                <div key={i} className="relative pl-6">
+                  <div className="absolute left-0 top-1.5 w-4 h-4 rounded-full bg-ac-yellow border-2 border-white shadow-sm" />
+                  <div className="text-xs font-bold text-ac-brown/40 mb-1">{item.date}</div>
+                  <p className="text-sm font-medium leading-relaxed">{item.content}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+        );
       default:
         return null;
     }
@@ -509,6 +524,7 @@ export default function Settings({ lang, t }: SettingsProps) {
           {[
             { id: 'desc', label: t.aboutDesc },
             { id: 'guide', label: t.aboutGuide },
+            { id: 'changelog', label: t.aboutContent.changelog.title },
             { id: 'privacy', label: t.aboutPrivacy }
           ].map((item, idx) => (
             <React.Fragment key={item.id}>
@@ -519,7 +535,7 @@ export default function Settings({ lang, t }: SettingsProps) {
                 <span className="font-bold">{item.label}</span>
                 <ChevronRight size={20} className="text-ac-brown/40" />
               </button>
-              {idx < 2 && <div className="h-px bg-ac-yellow/30 mx-4" />}
+              {idx < 3 && <div className="h-px bg-ac-yellow/30 mx-4" />}
             </React.Fragment>
           ))}
         </div>
@@ -621,7 +637,10 @@ export default function Settings({ lang, t }: SettingsProps) {
             >
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-xl font-bold text-ac-brown">
-                  {aboutModal === 'desc' ? t.aboutDesc : aboutModal === 'guide' ? t.aboutGuide : t.aboutPrivacy}
+                  {aboutModal === 'desc' ? t.aboutDesc : 
+                   aboutModal === 'guide' ? t.aboutGuide : 
+                   aboutModal === 'changelog' ? t.aboutContent.changelog.title :
+                   t.aboutPrivacy}
                 </h3>
                 <button onClick={() => setAboutModal(null)} className="p-2 bg-white rounded-full shadow-sm"><X size={20} /></button>
               </div>

@@ -66,6 +66,7 @@ export const TRANSLATIONS = {
     title: '隨書 Suishu',
     subtitle: '溫暖記錄每一天',
     newEntry: '寫日記',
+    viewEntry: '查看日記',
     editEntry: '編輯日記',
     mood: '今天的心情',
     photo: '照片記錄',
@@ -133,6 +134,13 @@ export const TRANSLATIONS = {
         p1: '隱私權：本應用程式不收集任何個人資料。所有日記內容、照片及設定均存儲於瀏覽器的 IndexedDB 中。除非您主動使用匯出功能，否則數據不會離開您的設備。',
         p2: '版權：Suishu 隨書 應用程式及其設計、圖標、程式碼版權所有。用戶所撰寫的日記內容版權歸用戶個人所有。',
         footer: '© 2026 Suishu Team. All rights reserved.'
+      },
+      changelog: {
+        title: '更新日誌',
+        items: [
+          { date: '2026/03/19', content: '新增「查看日記」唯讀模式，優化閱讀體驗與編輯流程。' },
+          { date: '2026/03/17', content: '隨書 Suishu 正式版完成！包含圖文日記、心情統計、PIN 碼鎖定及多國語言支援。' }
+        ]
       }
     },
     moods: {
@@ -158,6 +166,7 @@ export const TRANSLATIONS = {
     title: 'Suishu',
     subtitle: 'Warmly record every day',
     newEntry: 'New Diary',
+    viewEntry: 'View Diary',
     editEntry: 'Edit Diary',
     mood: 'Mood Today',
     photo: 'Photo Record',
@@ -225,6 +234,13 @@ export const TRANSLATIONS = {
         p1: 'Privacy: This application does not collect any personal data. All diary content, photos, and settings are stored in the browser\'s IndexedDB. Unless you actively use the export function, data will not leave your device.',
         p2: 'Copyright: Suishu application and its design, icons, and code are copyrighted. The diary content written by users belongs to the users themselves.',
         footer: '© 2026 Suishu Team. All rights reserved.'
+      },
+      changelog: {
+        title: 'Update History',
+        items: [
+          { date: '2026/03/19', content: 'Added "Diary Viewer" read-only mode, optimized reading and editing flow.' },
+          { date: '2026/03/17', content: 'Suishu official version completed! Includes photo diaries, mood stats, PIN lock, and multi-language support.' }
+        ]
       }
     },
     moods: {
@@ -250,6 +266,7 @@ export const TRANSLATIONS = {
     title: '随書 Suishu',
     subtitle: '毎日を温かく記録する',
     newEntry: '日記を書く',
+    viewEntry: '日記を見る',
     editEntry: '日記を編集',
     mood: '今日の気分',
     photo: '写真の記録',
@@ -317,6 +334,13 @@ export const TRANSLATIONS = {
         p1: 'プライバシー：このアプリケーションは個人データを収集しません。すべての日記の内容、写真、設定はブラウザのIndexedDBに保存されます。エクスポート機能を使用しない限り、データがデバイスから離れることはありません。',
         p2: '著作権：Suishuアプリケーションとそのデザイン、アイコン、コードは著作権で保護されています。ユーザーが作成した日記の内容はユーザー自身に帰属します。',
         footer: '© 2026 Suishu Team. All rights reserved.'
+      },
+      changelog: {
+        title: '更新履歴',
+        items: [
+          { date: '2026/03/19', content: '「日記を見る」読み取り専用モードを追加し、閲覧体験と編輯フローを最適化しました。' },
+          { date: '2026/03/17', content: '隨書 Suishu 正式版が完成！日記、気分統計、PINロック、多言語対応を搭載。' }
+        ]
       }
     },
     moods: {
